@@ -1,0 +1,1594 @@
+
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Citizen Developer Toolkit – Builder</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --ink: #0f172a;
+      --muted: #475569;
+      --accent: #005eb8;
+      --danger: #dc2626;
+      --success: #16a34a;
+      --warning: #ea580c;
+      --grid: #e5e7eb;
+      --shadow: 0 10px 30px rgba(2, 6, 23, 0.12);
+      --legacy-red: #fee2e2;
+      --legacy-border: #ef4444;
+      --modern-green: #dcfce7;
+      --modern-border: #22c55e;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; 
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Arial;
+      color: var(--ink); 
+      background: var(--bg); 
+      display: grid; 
+      grid-template-columns: 420px 1fr; 
+      gap: 16px;
+      padding: 16px;
+    }
+    
+    header {
+      grid-column: 1 / -1; 
+      background: var(--panel); 
+      border-radius: 16px; 
+      padding: 14px 18px; 
+      box-shadow: var(--shadow);
+      display:flex; 
+      align-items:center; 
+      justify-content:space-between; 
+      gap: 16px;
+    }
+    
+    header h1 { 
+      font-size: 18px; 
+      margin: 0; 
+      font-weight: 700; 
+      letter-spacing: .2px; 
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    header .actions { 
+      display:flex; 
+      flex-wrap: wrap; 
+      gap: 8px; 
+    }
+    
+    button, .btn {
+      appearance: none; 
+      border: 0; 
+      padding: 8px 12px; 
+      border-radius: 10px; 
+      background: var(--accent); 
+      color: white; 
+      font-weight: 600; 
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0, 94, 184, .25);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    
+    button:hover { 
+      transform: translateY(-1px); 
+      box-shadow: 0 8px 20px rgba(0, 94, 184, .35); 
+    }
+    button.secondary { background: #0ea5e9; box-shadow: 0 6px 16px rgba(14,165,233,.25); }
+    button.ghost { background: #e2e8f0; color: #0f172a; box-shadow: none; }
+    button.danger { background: var(--danger); box-shadow: 0 6px 16px rgba(220,38,38,.25); }
+    button.success { background: var(--success); box-shadow: 0 6px 16px rgba(22,163,74,.25); }
+    button:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+    
+    .material-icons { font-size: 18px; }
+
+    aside {
+      background: var(--panel); 
+      border-radius: 16px; 
+      padding: 14px; 
+      box-shadow: var(--shadow); 
+      height: calc(100vh - 128px); 
+      overflow:auto;
+    }
+    
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 16px;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 12px;
+    }
+    
+    .tab {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: transparent;
+      border: none;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 13px;
+    }
+    
+    .tab.active {
+      background: white;
+      color: var(--ink);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .group { 
+      margin-bottom: 16px; 
+    }
+    
+    .group h3 { 
+      margin: 8px 0 6px; 
+      font-size: 13px; 
+      color: var(--muted); 
+      font-weight: 700; 
+      text-transform: uppercase; 
+      letter-spacing: .08em; 
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .group h3 .material-icons {
+      font-size: 16px;
+    }
+
+    .palette { 
+      display:grid; 
+      grid-template-columns: repeat(6, 1fr); 
+      gap:8px; 
+    }
+    
+    .swatch { 
+      height: 28px; 
+      border-radius: 8px; 
+      border: 1px solid #0001; 
+      cursor: pointer; 
+      transition: transform 0.2s;
+    }
+    
+    .swatch:hover { 
+      transform: scale(1.1); 
+    }
+
+    .templates { 
+      display: grid; 
+      gap: 8px; 
+    }
+    
+    .templates button { 
+      width:100%; 
+      text-align:left; 
+      background: #eef6ff; 
+      color:#0b3360; 
+      padding: 10px 12px;
+      justify-content: flex-start;
+    }
+    
+    .templates button .material-icons {
+      font-size: 20px;
+    }
+    
+    .legacy-modern {
+      display: grid;
+      gap: 12px;
+      max-height: calc(100vh - 380px);
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    
+    .transformation-card {
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+      transition: all 0.2s;
+    }
+    
+    .transformation-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .transformation-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--ink);
+    }
+    
+    .transformation-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    .legacy-item, .modern-item {
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    
+    .legacy-item {
+      background: var(--legacy-red);
+      color: var(--danger);
+      text-align: right;
+      border: 1px solid #fca5a5;
+    }
+    
+    .modern-item {
+      background: var(--modern-green);
+      color: var(--success);
+      border: 1px solid #86efac;
+    }
+    
+    .arrow-transform {
+      color: var(--accent);
+      font-size: 20px;
+    }
+    
+    .transformation-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .transformation-actions button {
+      flex: 1;
+      font-size: 11px;
+      padding: 6px 8px;
+    }
+    
+    .transformation-actions button .material-icons {
+      font-size: 14px;
+    }
+    
+    .manual-steps {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+    
+    .step {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: var(--ink);
+    }
+    
+    .step-number {
+      background: var(--accent);
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 10px;
+      flex-shrink: 0;
+    }
+
+    #boardWrap { 
+      position: relative; 
+      background: var(--panel); 
+      border-radius: 16px; 
+      box-shadow: var(--shadow); 
+      overflow: hidden; 
+    }
+    
+    #board { 
+      width: 100%; 
+      height: calc(100vh - 128px); 
+      display:block; 
+      background: #fff; 
+    }
+
+    #editor { 
+      position: fixed; 
+      right: 24px; 
+      bottom: 24px; 
+      width: 380px; 
+      max-width: calc(100% - 32px); 
+      background: var(--panel); 
+      border-radius: 16px; 
+      box-shadow: var(--shadow); 
+      padding: 16px; 
+      display:none; 
+      z-index: 1000;
+    }
+    
+    #editor h3 { 
+      margin: 0 0 12px; 
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    #editor label { 
+      font-size: 12px; 
+      color: var(--muted); 
+      font-weight: 600; 
+      display:block; 
+      margin-top: 10px; 
+    }
+    
+    #editor input[type="text"], 
+    #editor textarea, 
+    #editor select, 
+    #editor input[type="number"] {
+      width:100%; 
+      padding: 8px 10px; 
+      border-radius: 10px; 
+      border: 1px solid #e2e8f0; 
+      font: inherit; 
+      background: #fff;
+    }
+    
+    #editor .row { 
+      display:grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 8px; 
+    }
+    
+    #toast { 
+      position:fixed; 
+      left:50%; 
+      transform: translateX(-50%); 
+      bottom:18px; 
+      background:#111827; 
+      color:#fff; 
+      padding:10px 14px; 
+      border-radius:12px; 
+      font-size:13px; 
+      display:none;
+      z-index: 2000;
+    }
+
+    .hint { 
+      font-size:11px; 
+      color: var(--muted); 
+      background: #f8fafc;
+      padding: 8px;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+    
+    .icon-select {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 4px;
+      margin-top: 8px;
+      max-height: 120px;
+      overflow-y: auto;
+      padding: 8px;
+      background: #f8fafc;
+      border-radius: 8px;
+    }
+    
+    .icon-option {
+      padding: 8px;
+      border-radius: 6px;
+      background: white;
+      border: 1px solid #e2e8f0;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    
+    .icon-option:hover {
+      background: var(--accent);
+      color: white;
+      transform: scale(1.1);
+    }
+    
+    .icon-option.selected {
+      background: var(--accent);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>
+      <span class="material-icons">developer_board</span>
+      Citizen Developer Toolkit – Visual Builder
+    </h1>
+    <div class="actions">
+      <button id="exportPng"><span class="material-icons">image</span>Export PNG</button>
+      <button id="saveJson" class="secondary"><span class="material-icons">save</span>Save JSON</button>
+      <label class="btn ghost" for="loadJsonFile">
+        <span class="material-icons">upload_file</span>Load
+        <input id="loadJsonFile" type="file" accept="application/json" hidden>
+      </label>
+      <button id="clearBoard" class="ghost"><span class="material-icons">clear</span>Clear</button>
+      <label class="btn ghost" for="bgFile">
+        <span class="material-icons">wallpaper</span>Background
+        <input id="bgFile" type="file" accept="image/*" hidden>
+      </label>
+    </div>
+  </header>
+
+  <aside>
+    <div class="tabs">
+      <button class="tab active" data-tab="templates">
+        <span class="material-icons">widgets</span>Templates
+      </button>
+      <button class="tab" data-tab="legacy">
+        <span class="material-icons">swap_horiz</span>Legacy → Modern
+      </button>
+    </div>
+    
+    <div class="tab-content active" data-content="templates">
+      <div class="group">
+        <h3><span class="material-icons">category</span>Quick Templates</h3>
+        <div class="templates">
+          <button data-template="capture">
+            <span class="material-icons">input</span>
+            1) Capture & Collect
+          </button>
+          <button data-template="organise">
+            <span class="material-icons">folder_open</span>
+            2) Organise & Store
+          </button>
+          <button data-template="automate">
+            <span class="material-icons">settings_suggest</span>
+            3) Automate & Connect
+          </button>
+          <button data-template="communicate">
+            <span class="material-icons">mail</span>
+            4) Communicate & Notify
+          </button>
+          <button data-template="collaborate">
+            <span class="material-icons">groups</span>
+            5) Collaborate & Track
+          </button>
+          <button data-template="innovate">
+            <span class="material-icons">auto_awesome</span>
+            6) Explore & Innovate
+          </button>
+          <button data-template="bigger">
+            <span class="material-icons">public</span>
+            The bigger picture
+          </button>
+        </div>
+      </div>
+      
+      <div class="group">
+        <h3><span class="material-icons">add_box</span>Quick Add</h3>
+        <div class="templates">
+          <button id="addNote"><span class="material-icons">note_add</span>Blank note</button>
+          <button id="addArrow"><span class="material-icons">trending_flat</span>Arrow connector</button>
+        </div>
+        <p class="hint">
+          <strong>Tips:</strong> Drag to move • Drag corner handle (◢) to resize • Double-click to edit • Delete key removes selected
+        </p>
+      </div>
+      
+      <div class="group">
+        <h3><span class="material-icons">palette</span>Colour Palette</h3>
+        <div class="palette" id="palette"></div>
+      </div>
+    </div>
+    
+    <div class="tab-content" data-content="legacy">
+      <div class="group">
+        <h3><span class="material-icons">update</span>Transform Legacy to Modern</h3>
+        <div class="legacy-modern" id="transformations"></div>
+      </div>
+      
+      <div class="group">
+        <h3><span class="material-icons">checklist</span>Migration Steps</h3>
+        <div class="manual-steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div>Audit existing manual processes and spreadsheets</div>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <div>Identify quick wins (simple forms, basic automation)</div>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <div>Create MS Forms for data collection</div>
+          </div>
+          <div class="step">
+            <div class="step-number">4</div>
+            <div>Build SharePoint Lists for structured data</div>
+          </div>
+          <div class="step">
+            <div class="step-number">5</div>
+            <div>Connect with Power Automate flows</div>
+          </div>
+          <div class="step">
+            <div class="step-number">6</div>
+            <div>Add approvals and notifications</div>
+          </div>
+          <div class="step">
+            <div class="step-number">7</div>
+            <div>Test with pilot users</div>
+          </div>
+          <div class="step">
+            <div class="step-number">8</div>
+            <div>Train end users and document</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main id="boardWrap">
+    <canvas id="board" width="1600" height="1000" aria-label="Design board" role="img"></canvas>
+  </main>
+
+  <div id="editor" aria-live="polite">
+    <h3><span class="material-icons">edit</span>Edit Block</h3>
+    <label>Icon
+      <div class="icon-select" id="iconSelect"></div>
+    </label>
+    <label>Heading
+      <input id="edTitle" type="text" />
+    </label>
+    <label>Bullets (one per line)
+      <textarea id="edBullets" rows="6"></textarea>
+    </label>
+    <div class="row">
+      <label>Width <input id="edW" type="number" min="120" max="1200" step="10"></label>
+      <label>Height <input id="edH" type="number" min="80" max="1200" step="10"></label>
+    </div>
+    <label>Colour
+      <select id="edColour"></select>
+    </label>
+    <label>Block Type
+      <select id="edType">
+        <option value="">Standard</option>
+        <option value="legacy">Legacy (Red)</option>
+        <option value="modern">Modern (Green)</option>
+      </select>
+    </label>
+    <div class="row" style="margin-top:10px">
+      <button id="applyEdit"><span class="material-icons">check</span>Apply</button>
+      <button id="closeEdit" class="ghost"><span class="material-icons">close</span>Close</button>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+<script>
+  // ---------- Utilities ----------
+  const DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  const board = document.getElementById('board');
+  const ctx = board.getContext('2d');
+  const wrap = document.getElementById('boardWrap');
+
+  function resizeCanvasToDisplaySize() {
+    const cssW = wrap.clientWidth; 
+    const cssH = wrap.clientHeight;
+    board.width = Math.round(cssW * DPR); 
+    board.height = Math.round(cssH * DPR);
+    board.style.width = cssW + 'px'; 
+    board.style.height = cssH + 'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    draw();
+  }
+  new ResizeObserver(resizeCanvasToDisplaySize).observe(wrap);
+
+  const colours = [
+    '#E7F0FF', '#DFF7F2', '#FFF6E6', '#F1F5F9', 
+    '#FDE68A', '#E9D5FF', '#D1FAE5', '#FEE2E2',
+    '#DBEAFE', '#FED7AA', '#E0E7FF', '#FECACA'
+  ];
+  
+  const icons = [
+    'input', 'folder_open', 'settings_suggest', 'mail', 
+    'groups', 'auto_awesome', 'public', 'dashboard',
+    'analytics', 'task_alt', 'cloud', 'security',
+    'speed', 'integration_instructions', 'hub', 'sync',
+    'description', 'assignment', 'schedule', 'notifications',
+    'code', 'email', 'attach_file', 'table_chart'
+  ];
+  
+  const strokeFor = (fill) => '#0f172a22';
+  const titleColour = '#0b3360';
+
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg; 
+    el.style.display = 'inline-block';
+    clearTimeout(toast._t); 
+    toast._t = setTimeout(()=>{ el.style.display='none'; }, 1800);
+  }
+
+  // ---------- Model ----------
+  let objects = [];
+  let bgImage = null;
+  let selected = null;
+  let drag = null;
+
+  function makeBlock({x=60,y=60,w=380,h=220, title='Title', bullets=[], fill=colours[0], icon='widgets', blockType=''}={}) {
+    return {type:'block', x,y,w,h, title, bullets, fill, icon, blockType, id: crypto.randomUUID()};
+  }
+  
+  function makeArrow({x1=100,y1=100,x2=300,y2=200}={}) {
+    return {type:'arrow', x1,y1,x2,y2, id: crypto.randomUUID()};
+  }
+
+  // ---------- Transformations Data ----------
+  const transformations = [
+    {
+      category: 'Data Processing',
+      icon: 'table_chart',
+      legacy: {
+        title: 'Excel Spreadsheets',
+        icon: 'table_chart',
+        bullets: [
+          'Manual data entry',
+          'Version control issues',
+          'Limited collaboration',
+          'No audit trail',
+          'Prone to corruption'
+        ]
+      },
+      modern: {
+        title: 'SharePoint Lists / Dataverse',
+        icon: 'cloud',
+        bullets: [
+          'Structured database',
+          'Version history built-in',
+          'Real-time collaboration',
+          'Full audit logging',
+          'Enterprise scalability'
+        ]
+      }
+    },
+    {
+      category: 'Email Processing',
+      icon: 'email',
+      legacy: {
+        title: 'Manual Email Processing',
+        icon: 'email',
+        bullets: [
+          'Reading each email manually',
+          'Copy-paste to spreadsheets',
+          'Manual filing and categorization',
+          'Delayed responses',
+          'Lost or overlooked emails'
+        ]
+      },
+      modern: {
+        title: 'Power Automate Outlook Connector',
+        icon: 'settings_suggest',
+        bullets: [
+          'Automatic email triggers',
+          'Extract data from body/attachments',
+          'Conditional logic routing',
+          'Auto-responses and filing',
+          'Integration with other systems'
+        ]
+      }
+    },
+    {
+      category: 'Document Generation',
+      icon: 'description',
+      legacy: {
+        title: 'Word Templates & Mail Merge',
+        icon: 'description',
+        bullets: [
+          'Manual document creation',
+          'Mail merge complexity',
+          'Version inconsistencies',
+          'Manual distribution'
+        ]
+      },
+      modern: {
+        title: 'Power Automate + Forms',
+        icon: 'auto_awesome',
+        bullets: [
+          'Dynamic document generation',
+          'Automated workflows',
+          'Consistent formatting',
+          'Automatic distribution',
+          'E-signature integration'
+        ]
+      }
+    },
+    {
+      category: 'Scripting & Automation',
+      icon: 'code',
+      legacy: {
+        title: 'VBA Scripts & Macros',
+        icon: 'code',
+        bullets: [
+          'Desktop-bound execution',
+          'Security vulnerabilities',
+          'Difficult to maintain',
+          'No error handling',
+          'Limited integration'
+        ]
+      },
+      modern: {
+        title: 'Power Automate Expressions',
+        icon: 'integration_instructions',
+        bullets: [
+          'Cloud-based execution',
+          'Enterprise security',
+          'Visual flow designer',
+          'Built-in error handling',
+          '600+ connectors available'
+        ]
+      }
+    },
+    {
+      category: 'Forms & Data Collection',
+      icon: 'input',
+      legacy: {
+        title: 'PDF Forms / Paper Forms',
+        icon: 'picture_as_pdf',
+        bullets: [
+          'Manual data extraction',
+          'No validation',
+          'Storage challenges',
+          'Accessibility issues'
+        ]
+      },
+      modern: {
+        title: 'Microsoft Forms / Power Apps',
+        icon: 'input',
+        bullets: [
+          'Automatic data capture',
+          'Real-time validation',
+          'Cloud storage',
+          'Mobile responsive',
+          'Branching logic'
+        ]
+      }
+    },
+    {
+      category: 'Reporting',
+      icon: 'analytics',
+      legacy: {
+        title: 'Manual Excel Reports',
+        icon: 'insert_chart',
+        bullets: [
+          'Time-consuming creation',
+          'Manual data gathering',
+          'Static snapshots',
+          'Email distribution'
+        ]
+      },
+      modern: {
+        title: 'Power BI / Power Automate',
+        icon: 'analytics',
+        bullets: [
+          'Automated generation',
+          'Real-time data',
+          'Interactive dashboards',
+          'Scheduled distribution',
+          'Mobile access'
+        ]
+      }
+    },
+    {
+      category: 'File Management',
+      icon: 'folder_open',
+      legacy: {
+        title: 'Network File Shares',
+        icon: 'folder_open',
+        bullets: [
+          'Limited remote access',
+          'No version control',
+          'Permission complexity',
+          'Search limitations'
+        ]
+      },
+      modern: {
+        title: 'SharePoint / OneDrive',
+        icon: 'cloud_queue',
+        bullets: [
+          'Access anywhere',
+          'Version history',
+          'Granular permissions',
+          'AI-powered search',
+          'Real-time sync'
+        ]
+      }
+    },
+    {
+      category: 'Communication',
+      icon: 'attach_file',
+      legacy: {
+        title: 'Email Attachments',
+        icon: 'attach_file',
+        bullets: [
+          'Version confusion',
+          'Storage limits',
+          'Security risks',
+          'No collaboration'
+        ]
+      },
+      modern: {
+        title: 'SharePoint Links / Loop',
+        icon: 'link',
+        bullets: [
+          'Single source of truth',
+          'Unlimited sharing',
+          'Secure access',
+          'Live collaboration',
+          'Real-time updates'
+        ]
+      }
+    },
+    {
+      category: 'Task Management',
+      icon: 'assignment',
+      legacy: {
+        title: 'Excel Task Lists',
+        icon: 'list',
+        bullets: [
+          'Manual updates',
+          'No notifications',
+          'Limited visibility',
+          'No integration'
+        ]
+      },
+      modern: {
+        title: 'Planner / To Do / Lists',
+        icon: 'task_alt',
+        bullets: [
+          'Automatic updates',
+          'Smart notifications',
+          'Team dashboards',
+          'Full M365 integration',
+          'Mobile apps'
+        ]
+      }
+    },
+    {
+      category: 'Approvals',
+      icon: 'approval',
+      legacy: {
+        title: 'Email Approval Chains',
+        icon: 'forward_to_inbox',
+        bullets: [
+          'Lost in inbox',
+          'No tracking',
+          'Manual follow-ups',
+          'Unclear status'
+        ]
+      },
+      modern: {
+        title: 'Power Automate Approvals',
+        icon: 'verified',
+        bullets: [
+          'Centralized hub',
+          'Full audit trail',
+          'Automatic reminders',
+          'Clear dashboards',
+          'Mobile approvals'
+        ]
+      }
+    }
+  ];
+
+  // ---------- Templates ----------
+  const T = {
+    capture: () => makeBlock({
+      title:'Capture & Collect – Microsoft Forms', 
+      icon: 'input',
+      bullets:[
+        'Simple, secure data collection',
+        'Control over responses (e.g. restrict external attachments)',
+        'Integrates with Excel and SharePoint automatically',
+        'Branching logic for dynamic forms',
+        'Scales up to bespoke HTML forms where needed'
+      ], 
+      fill: colours[0]
+    }),
+    organise: () => makeBlock({
+      title:'Organise & Store – SharePoint Lists', 
+      icon: 'folder_open',
+      bullets:[
+        'Easy way to structure and manage information',
+        'Version history and permissions built-in',
+        'Custom views and filters for different audiences',
+        'Integrated with Microsoft 365 apps',
+        'Forms the foundation for automation and reporting'
+      ], 
+      fill: colours[1]
+    }),
+    automate: () => makeBlock({
+      title:'Automate & Connect – Power Automate', 
+      icon: 'settings_suggest',
+      bullets:[
+        'Low-code/no-code automation platform',
+        '600+ connectors to various services',
+        'Enables "citizen developers" to join up processes',
+        'Approval workflows and business logic',
+        'Acts as the glue between systems'
+      ], 
+      fill: colours[2]
+    }),
+    communicate: () => makeBlock({
+      title:'Communicate & Notify – HTML Emails, Approvals, Adaptive Cards', 
+      icon: 'mail',
+      bullets:[
+        'Professional, easy-to-read notifications',
+        'Branded HTML email templates',
+        'Approvals create clear decision points',
+        'Adaptive Cards deliver interactive prompts in Teams',
+        'Push notifications to mobile devices'
+      ], 
+      fill: colours[3]
+    }),
+    collaborate: () => makeBlock({
+      title:'Collaborate & Track – Planner, To Do, Loop', 
+      icon: 'groups',
+      bullets:[
+        'Lightweight task management and process tracking',
+        'Kanban boards for visual workflow',
+        'Real-time collaboration across Teams, Outlook, and other apps',
+        'Loop components for live, synced content',
+        'Information stays live, editable, and always in sync'
+      ], 
+      fill: colours[6]
+    }),
+    innovate: () => makeBlock({
+      title:'Explore & Innovate – Copilot + Free LLM Tools', 
+      icon: 'auto_awesome',
+      bullets:[
+        'AI assistance built into Microsoft 365',
+        'Generate content, summarise, and analyse',
+        'Free LLM tiers provide a safe space to experiment',
+        'Build custom copilots with Copilot Studio',
+        'Encourages a culture of curiosity, efficiency, and creativity'
+      ], 
+      fill: colours[5]
+    }),
+    bigger: () => makeBlock({
+      title:'The bigger picture', 
+      icon: 'public',
+      bullets:[
+        'Start simple with Forms and Lists',
+        'Scale up with Automate and richer communication tools',
+        'Collaborate effectively through Planner and Loop',
+        'Enhance with Power BI for analytics and insights',
+        'Innovate confidently with Copilot and LLMs'
+      ], 
+      fill: colours[4]
+    })
+  };
+
+  // ---------- Drawing ----------
+  function drawGrid() {
+    ctx.save();
+    ctx.strokeStyle = '#00000010';
+    ctx.lineWidth = 1;
+    const step = 20;
+    for (let x=0; x<=board.clientWidth; x+=step) {
+      ctx.beginPath(); 
+      ctx.moveTo(x,0); 
+      ctx.lineTo(x,board.clientHeight); 
+      ctx.stroke();
+    }
+    for (let y=0; y<=board.clientHeight; y+=step) {
+      ctx.beginPath(); 
+      ctx.moveTo(0,y); 
+      ctx.lineTo(board.clientWidth,y); 
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function roundRect(x,y,w,h,r=14){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  function wrapText(text, x, y, maxWidth, lineHeight, bullet=false) {
+    const words = text.split(/\s+/);
+    let line = '';
+    const dot = bullet ? '• ' : '';
+    let startX = x;
+    for (let n = 0; n < words.length; n++) {
+      const testLine = line + (line? ' ':'') + words[n];
+      const metrics = ctx.measureText(dot + testLine);
+      if (metrics.width > maxWidth && n > 0) {
+        ctx.fillText(dot + line, startX, y);
+        line = words[n];
+        y += lineHeight;
+      } else {
+        line = testLine;
+      }
+    }
+    ctx.fillText(dot + line, startX, y);
+    return y + lineHeight;
+  }
+
+  function drawBlock(b) {
+    const {x,y,w,h,fill,title,bullets,icon,blockType} = b;
+    
+    // Determine fill color based on blockType
+    let actualFill = fill;
+    let strokeColor = strokeFor(fill);
+    if (blockType === 'legacy') {
+      actualFill = '#fee2e2';
+      strokeColor = '#ef444488';
+    } else if (blockType === 'modern') {
+      actualFill = '#dcfce7';
+      strokeColor = '#22c55e88';
+    }
+    
+    // Card shadow
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.1)';
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetY = 4;
+    ctx.fillStyle = actualFill; 
+    roundRect(x,y,w,h,14); 
+    ctx.fill();
+    ctx.restore();
+    
+    // Card border
+    ctx.strokeStyle = strokeColor; 
+    ctx.lineWidth = blockType ? 2 : 1.5;
+    roundRect(x,y,w,h,14); 
+    ctx.stroke();
+    
+    // Type badge
+    if (blockType) {
+      ctx.save();
+      const badgeText = blockType === 'legacy' ? 'LEGACY' : 'MODERN';
+      const badgeColor = blockType === 'legacy' ? '#dc2626' : '#16a34a';
+      ctx.font = '700 10px Inter, Segoe UI, system-ui, Arial';
+      const metrics = ctx.measureText(badgeText);
+      const badgeX = x + w - metrics.width - 20;
+      const badgeY = y + 12;
+      
+      ctx.fillStyle = badgeColor;
+      ctx.fillRect(badgeX - 4, badgeY - 10, metrics.width + 8, 16);
+      ctx.fillStyle = 'white';
+      ctx.fillText(badgeText, badgeX, badgeY);
+      ctx.restore();
+    }
+    
+    // Icon
+    if (icon) {
+      ctx.save();
+      ctx.font = '24px Material Icons';
+      ctx.fillStyle = titleColour;
+      ctx.fillText(icon, x + 14, y + 34);
+      ctx.restore();
+    }
+    
+    // Title
+    ctx.fillStyle = titleColour; 
+    ctx.font = '700 16px Inter, Segoe UI, system-ui, Arial';
+    const pad = 14; 
+    const titleX = icon ? x + pad + 32 : x + pad;
+    let ty = y + pad + 14;
+    wrapText(title, titleX, ty, w - pad*2 - (icon ? 32 : 0), 20);
+    
+    // Bullets
+    ctx.fillStyle = '#0f172a'; 
+    ctx.font = '500 13px Inter, Segoe UI, system-ui, Arial';
+    ty += 18 + 6;
+    for (const bullet of bullets) {
+      ty = wrapText(bullet, x+pad, ty, w - pad*2, 17, true);
+    }
+    
+    // Resize handle
+    ctx.fillStyle = '#0f172a55';
+    ctx.fillText('◢', x + w - 20, y + h - 6);
+    
+    // Selection indicator
+    if (selected && selected.id === b.id) {
+      ctx.setLineDash([6,4]); 
+      ctx.strokeStyle = '#0b5fff'; 
+      ctx.lineWidth = 2;
+      roundRect(x-2,y-2,w+4,h+4,16); 
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+
+  function drawArrow(a) {
+    ctx.save();
+    ctx.strokeStyle = '#0b5fff'; 
+    ctx.lineWidth = 3; 
+    ctx.lineCap='round';
+    
+    // Main line
+    ctx.beginPath(); 
+    ctx.moveTo(a.x1, a.y1); 
+    ctx.lineTo(a.x2, a.y2); 
+    ctx.stroke();
+    
+    // Arrow head
+    const angle = Math.atan2(a.y2 - a.y1, a.x2 - a.x1);
+    const size = 10;
+    ctx.beginPath();
+    ctx.moveTo(a.x2, a.y2);
+    ctx.lineTo(a.x2 - size*Math.cos(angle - Math.PI/6), a.y2 - size*Math.sin(angle - Math.PI/6));
+    ctx.moveTo(a.x2, a.y2);
+    ctx.lineTo(a.x2 - size*Math.cos(angle + Math.PI/6), a.y2 - size*Math.sin(angle + Math.PI/6));
+    ctx.stroke();
+    
+    if (selected && selected.id === a.id) {
+      ctx.setLineDash([6,4]); 
+      ctx.strokeStyle = '#0b5fff88'; 
+      ctx.lineWidth = 2;
+      ctx.strokeRect(
+        Math.min(a.x1,a.x2)-6, 
+        Math.min(a.y1,a.y2)-6, 
+        Math.abs(a.x2-a.x1)+12, 
+        Math.abs(a.y2-a.y1)+12
+      );
+      ctx.setLineDash([]);
+    }
+    ctx.restore();
+  }
+
+  function drawBackground() {
+    if (!bgImage) return;
+    const w = board.clientWidth, h = board.clientHeight;
+    const scale = Math.max(w/bgImage.width, h/bgImage.height);
+    const dw = bgImage.width*scale, dh = bgImage.height*scale;
+    const dx = (w-dw)/2, dy = (h-dh)/2;
+    ctx.globalAlpha = 0.08;
+    ctx.drawImage(bgImage, dx, dy, dw, dh);
+    ctx.globalAlpha = 1;
+  }
+
+  function draw() {
+    ctx.clearRect(0,0,board.clientWidth,board.clientHeight);
+    ctx.fillStyle = '#ffffff'; 
+    ctx.fillRect(0,0,board.clientWidth,board.clientHeight);
+    drawBackground();
+    drawGrid();
+    for (const obj of objects) {
+      if (obj.type === 'block') drawBlock(obj); 
+      else drawArrow(obj);
+    }
+  }
+
+  // ---------- Hit testing ----------
+  function hit(x, y) {
+    for (let i=objects.length-1; i>=0; i--) {
+      const o = objects[i];
+      if (o.type === 'block') {
+        if (x>=o.x && x<=o.x+o.w && y>=o.y && y<=o.y+o.h) {
+          return {obj:o, part: (x>o.x+o.w-26 && y>o.y+o.h-26 ? 'resize':'body')};
+        }
+      } else if (o.type === 'arrow') {
+        const dist = pointToSegmentDistance(x,y, o.x1,o.y1,o.x2,o.y2);
+        if (dist < 8) return {obj:o, part:'line'};
+      }
+    }
+    return null;
+  }
+  
+  function pointToSegmentDistance(px,py,x1,y1,x2,y2){
+    const A=px-x1,B=py-y1,C=x2-x1,D=y2-y1; 
+    const dot=A*C+B*D; 
+    const len=C*C+D*D; 
+    let t= -1; 
+    if(len!==0) t=Math.max(0,Math.min(1,dot/len));
+    const xx=x1+t*C, yy=y1+t*D; 
+    const dx=px-xx, dy=py-yy; 
+    return Math.hypot(dx,dy);
+  }
+
+  // ---------- Interaction ----------
+  let lastX=0,lastY=0; 
+  let snapping = true;
+  const snap = (v) => snapping ? Math.round(v/10)*10 : v;
+
+  board.addEventListener('mousedown', e => {
+    const rect = board.getBoundingClientRect();
+    const x = (e.clientX - rect.left); 
+    const y = (e.clientY - rect.top);
+    const h = hit(x,y);
+    if (h) {
+      selected = h.obj;
+      objects = objects.filter(o=>o.id!==selected.id).concat([selected]);
+      if (selected.type==='block') {
+        if (h.part==='resize') {
+          drag = {type:'resize', dx:selected.x+selected.w - x, dy:selected.y+selected.h - y};
+        } else {
+          drag = {type:'move', dx:x-selected.x, dy:y-selected.y};
+        }
+      } else if (selected.type==='arrow') {
+        const d1 = Math.hypot(x-selected.x1, y-selected.y1);
+        const d2 = Math.hypot(x-selected.x2, y-selected.y2);
+        drag = {type:'arrow', end: (d1<d2?'start':'end'), dx:x, dy:y};
+      }
+    } else { 
+      selected = null; 
+    }
+    lastX=x; lastY=y; 
+    draw();
+  });
+
+  board.addEventListener('mousemove', e => {
+    if (!drag) return;
+    const rect = board.getBoundingClientRect();
+    const x = (e.clientX - rect.left); 
+    const y = (e.clientY - rect.top);
+    if (selected?.type==='block') {
+      if (drag.type==='move') { 
+        selected.x = snap(x - drag.dx); 
+        selected.y = snap(y - drag.dy); 
+      } else if (drag.type==='resize') { 
+        selected.w = Math.max(140, snap(x + drag.dx - selected.x)); 
+        selected.h = Math.max(100, snap(y + drag.dy - selected.y)); 
+      }
+    } else if (selected?.type==='arrow') {
+      if (drag.type==='arrow') {
+        if (drag.end==='start') { 
+          selected.x1 = snap(x); 
+          selected.y1 = snap(y); 
+        } else { 
+          selected.x2 = snap(x); 
+          selected.y2 = snap(y); 
+        }
+      }
+    }
+    lastX=x; lastY=y; 
+    draw();
+  });
+
+  window.addEventListener('mouseup', ()=> drag=null);
+
+  board.addEventListener('dblclick', e => {
+    if (!selected || selected.type!=='block') return; 
+    openEditor(selected);
+  });
+
+  window.addEventListener('keydown', e => {
+    if (e.key==='Delete' && selected){ 
+      objects = objects.filter(o=>o.id!==selected.id); 
+      selected=null; 
+      draw(); 
+    }
+    if (!selected) return;
+    const step = e.shiftKey? 10 : 2;
+    if (['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)) e.preventDefault();
+    if (e.key==='ArrowLeft'){ selected.x = snap(selected.x - step); draw(); }
+    if (e.key==='ArrowRight'){ selected.x = snap(selected.x + step); draw(); }
+    if (e.key==='ArrowUp'){ selected.y = snap(selected.y - step); draw(); }
+    if (e.key==='ArrowDown'){ selected.y = snap(selected.y + step); draw(); }
+  });
+
+  // ---------- Editor ----------
+  const editor = document.getElementById('editor');
+  const edTitle = document.getElementById('edTitle');
+  const edBullets = document.getElementById('edBullets');
+  const edW = document.getElementById('edW');
+  const edH = document.getElementById('edH');
+  const edColour = document.getElementById('edColour');
+  const edType = document.getElementById('edType');
+  const iconSelect = document.getElementById('iconSelect');
+  
+  let selectedIcon = 'widgets';
+
+  // Populate icon selector
+  for (const icon of icons) {
+    const div = document.createElement('div');
+    div.className = 'icon-option';
+    div.innerHTML = `<span class="material-icons">${icon}</span>`;
+    div.onclick = () => {
+      document.querySelectorAll('.icon-option').forEach(el => el.classList.remove('selected'));
+      div.classList.add('selected');
+      selectedIcon = icon;
+    };
+    iconSelect.appendChild(div);
+  }
+
+  function openEditor(b){
+    editor.style.display='block';
+    edTitle.value=b.title; 
+    edBullets.value=b.bullets.join('\n'); 
+    edW.value=b.w; 
+    edH.value=b.h; 
+    edColour.value=b.fill;
+    edType.value=b.blockType || '';
+    selectedIcon = b.icon || 'widgets';
+    document.querySelectorAll('.icon-option').forEach(el => {
+      const icon = el.querySelector('.material-icons').textContent;
+      if (icon === selectedIcon) el.classList.add('selected');
+      else el.classList.remove('selected');
+    });
+  }
+  
+  document.getElementById('applyEdit').onclick = ()=>{
+    if(!(selected && selected.type==='block')) return;
+    selected.title = edTitle.value.trim() || selected.title;
+    selected.bullets = edBullets.value.split('\n').map(s=>s.trim()).filter(Boolean);
+    selected.w = Math.max(140, +edW.value||selected.w);
+    selected.h = Math.max(100, +edH.value||selected.h);
+    selected.fill = edColour.value;
+    selected.icon = selectedIcon;
+    selected.blockType = edType.value;
+    draw(); 
+    toast('Block updated');
+  };
+  
+  document.getElementById('closeEdit').onclick = ()=> editor.style.display='none';
+
+  // Populate colour pickers & palette
+  const palette = document.getElementById('palette');
+  for (const c of colours) {
+    const d = document.createElement('div'); 
+    d.className='swatch'; 
+    d.style.background=c; 
+    d.title=c;
+    d.onclick = ()=>{ 
+      if (selected && selected.type==='block'){ 
+        selected.fill=c; 
+        edColour.value=c; 
+        draw(); 
+      } 
+    };
+    palette.appendChild(d);
+    const opt = document.createElement('option'); 
+    opt.value=c; 
+    opt.textContent=c; 
+    edColour.appendChild(opt);
+  }
+
+  // ---------- Transformation Cards ----------
+  function createTransformationCard(transform, index) {
+    const card = document.createElement('div');
+    card.className = 'transformation-card';
+    
+    card.innerHTML = `
+      <div class="transformation-header">
+        <span class="material-icons">${transform.icon}</span>
+        ${transform.category}
+      </div>
+      <div class="transformation-row">
+        <div class="legacy-item">${transform.legacy.title}</div>
+        <span class="material-icons arrow-transform">arrow_forward</span>
+        <div class="modern-item">${transform.modern.title}</div>
+      </div>
+      <div class="transformation-actions">
+        <button class="danger" data-action="legacy" data-index="${index}">
+          <span class="material-icons">add</span>Legacy
+        </button>
+        <button class="success" data-action="modern" data-index="${index}">
+          <span class="material-icons">add</span>Modern
+        </button>
+        <button class="secondary" data-action="both" data-index="${index}">
+          <span class="material-icons">compare_arrows</span>Both
+        </button>
+      </div>
+    `;
+    
+    // Add event listeners
+    card.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const action = btn.dataset.action;
+        const idx = parseInt(btn.dataset.index);
+        const t = transformations[idx];
+        
+        if (action === 'legacy' || action === 'both') {
+          const legacy = makeBlock({
+            title: t.legacy.title,
+            icon: t.legacy.icon,
+            bullets: t.legacy.bullets,
+            fill: '#fee2e2',
+            blockType: 'legacy',
+            x: 40 + (objects.length * 20) % 200,
+            y: 40 + (objects.length * 20) % 200
+          });
+          objects.push(legacy);
+        }
+        
+        if (action === 'modern' || action === 'both') {
+          const xOffset = action === 'both' ? 420 : 0;
+          const modern = makeBlock({
+            title: t.modern.title,
+            icon: t.modern.icon,
+            bullets: t.modern.bullets,
+            fill: '#dcfce7',
+            blockType: 'modern',
+            x: 40 + xOffset + (objects.length * 20) % 200,
+            y: 40 + (objects.length * 20) % 200
+          });
+          objects.push(modern);
+          
+          // Add connecting arrow if both
+          if (action === 'both' && objects.length >= 2) {
+            const legacy = objects[objects.length - 2];
+            const modern = objects[objects.length - 1];
+            const arrow = makeArrow({
+              x1: legacy.x + legacy.w,
+              y1: legacy.y + legacy.h / 2,
+              x2: modern.x,
+              y2: modern.y + modern.h / 2
+            });
+            objects.push(arrow);
+          }
+        }
+        
+        draw();
+        toast(`Added ${action === 'both' ? 'transformation' : action} block(s) to canvas`);
+      });
+    });
+    
+    return card;
+  }
+
+  // Populate transformations
+  const transformationsContainer = document.getElementById('transformations');
+  transformations.forEach((t, i) => {
+    transformationsContainer.appendChild(createTransformationCard(t, i));
+  });
+
+  // ---------- Tabs ----------
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      const content = document.querySelector(`[data-content="${tab.dataset.tab}"]`);
+      if (content) content.classList.add('active');
+    });
+  });
+
+  // ---------- Toolbar actions ----------
+  document.querySelectorAll('[data-template]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const type = btn.getAttribute('data-template');
+      const obj = T[type](); 
+      obj.x = 40 + (objects.length*20)%200; 
+      obj.y = 40 + (objects.length*14)%160; 
+      objects.push(obj); 
+      selected=obj; 
+      draw();
+    });
+  });
+
+  document.getElementById('addNote').onclick = ()=>{ 
+    objects.push(makeBlock({
+      title:'Note', 
+      bullets:['Double-click to edit'], 
+      fill: colours[3],
+      icon: 'note'
+    })); 
+    draw(); 
+  };
+  
+  document.getElementById('addArrow').onclick = ()=>{ 
+    objects.push(makeArrow({})); 
+    draw(); 
+  };
+
+  document.getElementById('exportPng').onclick = ()=>{
+    const url = board.toDataURL('image/png');
+    const a = document.createElement('a'); 
+    a.href=url; 
+    a.download = 'citizen-toolkit.png'; 
+    a.click();
+  };
+
+  document.getElementById('saveJson').onclick = ()=>{
+    const data = {objects, bg: !!bgImage};
+    const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+    const a = document.createElement('a'); 
+    a.href=URL.createObjectURL(blob); 
+    a.download='layout.json'; 
+    a.click(); 
+    URL.revokeObjectURL(a.href);
+  };
+
+  document.getElementById('loadJsonFile').addEventListener('change', async (e)=>{
+    const file = e.target.files[0]; 
+    if(!file) return;
+    const text = await file.text();
+    try { 
+      const data = JSON.parse(text); 
+      if(Array.isArray(data.objects)) { 
+        objects = data.objects; 
+        selected=null; 
+        draw(); 
+        toast('Layout loaded'); 
+      } 
+    } catch(err){ 
+      alert('Invalid JSON'); 
+    }
+    e.target.value='';
+  });
+
+  document.getElementById('bgFile').addEventListener('change', async (e)=>{
+    const file = e.target.files[0]; 
+    if(!file) return; 
+    const img = new Image();
+    img.onload = ()=>{ 
+      bgImage = img; 
+      draw(); 
+      toast('Background added'); 
+    };
+    img.src = URL.createObjectURL(file);
+    e.target.value='';
+  });
+
+  document.getElementById('clearBoard').onclick = ()=>{ 
+    if(confirm('Clear the board?')){ 
+      objects=[]; 
+      selected=null; 
+      bgImage=null; 
+      draw(); 
+    } 
+  };
+
+  // Initial stage setup
+  resizeCanvasToDisplaySize();
+  // Add welcome example
+  const welcome = makeBlock({
+    title: 'Welcome to Citizen Developer Toolkit!',
+    icon: 'rocket_launch',
+    bullets: [
+      'Click templates to add building blocks',
+      'Use Legacy → Modern tab for transformations',
+      'Drag blocks to arrange your workflow',
+      'Double-click blocks to edit details',
+      'Export your design as PNG when ready'
+    ],
+    fill: colours[4],
+    x: 40,
+    y: 40,
+    w: 400,
+    h: 200
+  });
+  objects.push(welcome);
+  draw();
+</script>
+</body>
+</html>
